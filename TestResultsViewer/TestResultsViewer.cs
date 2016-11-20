@@ -10,11 +10,16 @@ using System.Windows.Forms;
 
 namespace TestResultsViewer
 {
-	public partial class Form1 : Form
+	public partial class TestResultsViewer : Form
 	{
-		public Form1()
+		public TestResultsViewer()
 		{
 			InitializeComponent();
+		}
+
+		private void TestResultsViewer_Load(object sender, EventArgs e)
+		{
+
 		}
 	}
 }
