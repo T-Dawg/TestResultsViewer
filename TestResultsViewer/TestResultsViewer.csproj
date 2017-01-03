@@ -46,6 +46,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ErrorHandler.cs" />
+    <Compile Include="Parser.cs" />
     <Compile Include="Results.cs" />
     <Compile Include="TestResultsViewer.cs">
       <SubType>Form</SubType>

@@ -3,113 +3,113 @@ using System.Collections.Generic;
 
 namespace TestResultsViewer
 {
-	class Results
+	public abstract class TestBase
 	{
-		public TestRun testRun;
+		public string Id { get; set; }
+		public string Label { get; set; }
+		public int Asserts { get; set; }
+		public string Result { get; set; }
+		public DateTime StartTime { get; set; }
+		public DateTime EndTime { get; set; }
+		public double Duration { get; set; }
 	}
 
-	abstract class TestBase
+	public abstract class CollectionResults : TestBase
 	{
-		public string id;
-		public string label;
-		public int asserts;
-		public string result;
-		public DateTime startTime;
-		public DateTime endTime;
-		public double duration;
+		public int TestCaseCount { get; set; }
+		public int Total { get; set; }
+		public int Passed { get; set; }
+		public int Failed { get; set; }
+		public int Inconclusive { get; set; }
+		public int Skipped { get; set; }
 	}
 
-	abstract class CollectionResults : TestBase
+	public class TestRun : CollectionResults
 	{
-		public int testCaseCount;
-		public int total;
-		public int passed;
-		public int failed;
-		public int inconclusive;
-		public int skipped;
+		public string EngineVersion { get; set; }
+		public string ClrVersion { get; set; }
+		public string CommandLine { get; set; }
+		public TestSuite TestSuite { get; set; }
 	}
 
-	class TestRun : CollectionResults
+	public class TestSuite : CollectionResults
 	{
-		public string engineVersion;
-		public string clrVersion;
-		public string commandLine;
-		public TestSuite testSuite;
+		public string Type { get; set; }
+		public string Name { get; set; }
+		public string FullName { get; set; }
+		public string ClassName { get; set; }
+		public string RunState { get; set; }
+		public Environment Environment { get; set; }
+		public Settings Settings { get; set; }
+		public PropertyList Properties { get; set; }
+		public Failure Failure { get; set; }
+		public List<TestSuite> TestSuites { get; set; }
+		public Reason Reason { get; set; }
+		public List<TestCase> TestCases { get; set; }
 	}
 
-	class TestSuite : CollectionResults
+	public class Results
 	{
-		public string type;
-		public string name;
-		public string fullName;
-		public string className;
-		public string runState;
-		public Environment environment;
-		public Settings settings;
-		public PropertyList properties;
-		public Failure failure;
-		public List<TestSuite> testSuites;
-		public string reason;
-		public List<TestCase> testCases;
+		public TestRun TestRun { get; set; }
 	}
 
-	class TestCase : TestBase
+	public class TestCase : TestBase
 	{
-		public string name;
-		public string fullName;
-		public string methodName;
-		public string className;
-		public string runState;
-		public int seed;
-		public string site;
-		public PropertyList properties;
-		public Reason reason;
-		public Failure failure;
+		public string Name { get; set; }
+		public string FullName { get; set; }
+		public string MethodName { get; set; }
+		public string ClassName { get; set; }
+		public string RunState { get; set; }
+		public int Seed { get; set; }
+		public string Site { get; set; }
+		public PropertyList Properties { get; set; }
+		public Reason Reason { get; set; }
+		public Failure Failure { get; set; }
 	}
 
-	class Environment
+	public class Environment
 	{
-		public string frameworkVersion;
-		public string clrVersion;
-		public string osVersion;
-		public string platform;
-		public string cwd;
-		public string machineName;
-		public string user;
-		public string userDomain;
-		public string culture;
-		public string uiCulture;
-		public string osArchitecture;
+		public string FrameworkVersion { get; set; }
+		public string ClrVersion { get; set; }
+		public string OsVersion { get; set; }
+		public string Platform { get; set; }
+		public string Cwd { get; set; }
+		public string MachineName { get; set; }
+		public string User { get; set; }
+		public string UserDomain { get; set; }
+		public string Culture { get; set; }
+		public string UiCulture { get; set; }
+		public string OsArchitecture { get; set; }
 	}
 
-	class Setting
+	public class Setting
 	{
-		public string name;
-		public string value;
+		public string Name { get; set; }
+		public string Value { get; set; }
 	}
 
-	class Settings : List<Setting>
-	{
-	}
-
-	class Property
-	{
-		public string name;
-		public string value;
-	}
-
-	class PropertyList : List<Property>
+	public class Settings : List<Setting>
 	{
 	}
 
-	class Failure
+	public class Property
 	{
-		public string message;
-		public string stackTrace;
+		public string Name { get; set; }
+		public string Value { get; set; }
 	}
 
-	class Reason
+	public class PropertyList : List<Property>
 	{
-		public string message;
+	}
+
+	public class Failure
+	{
+		public string Message { get; set; }
+		public string StackTrace { get; set; }
+	}
+
+	public class Reason
+	{
+		public string Message { get; set; }
 	}
 }
