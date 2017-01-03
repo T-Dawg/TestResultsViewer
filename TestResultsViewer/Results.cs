@@ -46,6 +46,7 @@ namespace TestResultsViewer
 		public List<TestSuite> TestSuites { get; set; }
 		public Reason Reason { get; set; }
 		public List<TestCase> TestCases { get; set; }
+		public TestSuite Parent { get; set; }
 	}
 
 	public class Results
@@ -65,6 +66,7 @@ namespace TestResultsViewer
 		public PropertyList Properties { get; set; }
 		public Reason Reason { get; set; }
 		public Failure Failure { get; set; }
+		public TestSuite Parent { get; set; }
 	}
 
 	public class Environment

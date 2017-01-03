@@ -158,13 +158,17 @@ namespace TestResultsViewer
 			testSuite.TestSuites = new List<TestSuite>();
 			foreach (var ts in element.Elements(TestSuiteElement))
 			{
-				testSuite.TestSuites.Add(TestSuite(ts));
+				var tmp = TestSuite(ts);
+				tmp.Parent = testSuite;
+				testSuite.TestSuites.Add(tmp);
 			}
 
 			testSuite.TestCases = new List<TestCase>();
 			foreach (var tc in element.Elements(TestCaseElement))
 			{
-				testSuite.TestCases.Add(TestCase(tc));
+				var tmp = TestCase(tc);
+				tmp.Parent = testSuite;
+				testSuite.TestCases.Add(tmp);
 			}
 
 			return testSuite;
