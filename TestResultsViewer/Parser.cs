@@ -322,6 +322,7 @@ namespace TestResultsViewer
 			}
 
 			var reader = node.CreateReader();
+			reader.Read();
 			if (reader.NodeType == XmlNodeType.CDATA)
 			{
 				return reader.Value;
