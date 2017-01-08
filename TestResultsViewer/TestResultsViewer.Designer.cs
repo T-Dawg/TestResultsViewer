@@ -37,6 +37,8 @@
 			this.panel_TestDetail = new System.Windows.Forms.Panel();
 			this.splitContainer_Main = new System.Windows.Forms.SplitContainer();
 			this.splitContainer_Left = new System.Windows.Forms.SplitContainer();
+			this.label_TreeResults = new System.Windows.Forms.Label();
+			this.panel_TreeResultsHeader = new System.Windows.Forms.Panel();
 			this.menuStrip1.SuspendLayout();
 			this.panel_NodeName.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer_Main)).BeginInit();
@@ -46,6 +48,7 @@
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer_Left)).BeginInit();
 			this.splitContainer_Left.Panel2.SuspendLayout();
 			this.splitContainer_Left.SuspendLayout();
+			this.panel_TreeResultsHeader.SuspendLayout();
 			this.SuspendLayout();
 			// 
 			// menuStrip1
@@ -77,10 +80,10 @@
 			// 
 			this.TestStatusTreeView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.TestStatusTreeView.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.TestStatusTreeView.Location = new System.Drawing.Point(0, 0);
+			this.TestStatusTreeView.Location = new System.Drawing.Point(0, 24);
 			this.TestStatusTreeView.Name = "TestStatusTreeView";
 			this.TestStatusTreeView.ShowNodeToolTips = true;
-			this.TestStatusTreeView.Size = new System.Drawing.Size(352, 622);
+			this.TestStatusTreeView.Size = new System.Drawing.Size(352, 598);
 			this.TestStatusTreeView.TabIndex = 1;
 			this.TestStatusTreeView.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TestStatusTreeView_NodeMouseClick);
 			// 
@@ -91,14 +94,15 @@
 			this.panel_NodeName.Dock = System.Windows.Forms.DockStyle.Top;
 			this.panel_NodeName.Location = new System.Drawing.Point(0, 0);
 			this.panel_NodeName.Name = "panel_NodeName";
-			this.panel_NodeName.Size = new System.Drawing.Size(616, 46);
+			this.panel_NodeName.Size = new System.Drawing.Size(616, 31);
 			this.panel_NodeName.TabIndex = 1;
 			// 
 			// label_NodeName
 			// 
+			this.label_NodeName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
 			this.label_NodeName.AutoSize = true;
 			this.label_NodeName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.label_NodeName.Location = new System.Drawing.Point(3, 14);
+			this.label_NodeName.Location = new System.Drawing.Point(2, 4);
 			this.label_NodeName.Name = "label_NodeName";
 			this.label_NodeName.Size = new System.Drawing.Size(85, 20);
 			this.label_NodeName.TabIndex = 0;
@@ -110,9 +114,9 @@
 			this.panel_TestDetail.BackColor = System.Drawing.SystemColors.Window;
 			this.panel_TestDetail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.panel_TestDetail.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.panel_TestDetail.Location = new System.Drawing.Point(0, 46);
+			this.panel_TestDetail.Location = new System.Drawing.Point(0, 31);
 			this.panel_TestDetail.Name = "panel_TestDetail";
-			this.panel_TestDetail.Size = new System.Drawing.Size(616, 243);
+			this.panel_TestDetail.Size = new System.Drawing.Size(616, 258);
 			this.panel_TestDetail.TabIndex = 0;
 			// 
 			// splitContainer_Main
@@ -130,6 +134,7 @@
 			// splitContainer_Main.Panel2
 			// 
 			this.splitContainer_Main.Panel2.Controls.Add(this.TestStatusTreeView);
+			this.splitContainer_Main.Panel2.Controls.Add(this.panel_TreeResultsHeader);
 			this.splitContainer_Main.Size = new System.Drawing.Size(972, 622);
 			this.splitContainer_Main.SplitterDistance = 616;
 			this.splitContainer_Main.TabIndex = 3;
@@ -148,6 +153,26 @@
 			this.splitContainer_Left.Size = new System.Drawing.Size(616, 622);
 			this.splitContainer_Left.SplitterDistance = 329;
 			this.splitContainer_Left.TabIndex = 3;
+			// 
+			// label_TreeResults
+			// 
+			this.label_TreeResults.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+			this.label_TreeResults.AutoSize = true;
+			this.label_TreeResults.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.label_TreeResults.Location = new System.Drawing.Point(2, 2);
+			this.label_TreeResults.Name = "label_TreeResults";
+			this.label_TreeResults.Size = new System.Drawing.Size(122, 17);
+			this.label_TreeResults.TabIndex = 2;
+			this.label_TreeResults.Text = "Results Tree View";
+			// 
+			// panel_TreeResultsHeader
+			// 
+			this.panel_TreeResultsHeader.Controls.Add(this.label_TreeResults);
+			this.panel_TreeResultsHeader.Dock = System.Windows.Forms.DockStyle.Top;
+			this.panel_TreeResultsHeader.Location = new System.Drawing.Point(0, 0);
+			this.panel_TreeResultsHeader.Name = "panel_TreeResultsHeader";
+			this.panel_TreeResultsHeader.Size = new System.Drawing.Size(352, 24);
+			this.panel_TreeResultsHeader.TabIndex = 3;
 			// 
 			// form_Viewer
 			// 
@@ -171,6 +196,8 @@
 			this.splitContainer_Left.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer_Left)).EndInit();
 			this.splitContainer_Left.ResumeLayout(false);
+			this.panel_TreeResultsHeader.ResumeLayout(false);
+			this.panel_TreeResultsHeader.PerformLayout();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -187,6 +214,8 @@
 		private System.Windows.Forms.Panel panel_TestDetail;
 		private System.Windows.Forms.SplitContainer splitContainer_Main;
 		private System.Windows.Forms.SplitContainer splitContainer_Left;
+		private System.Windows.Forms.Panel panel_TreeResultsHeader;
+		private System.Windows.Forms.Label label_TreeResults;
 	}
 }
 
