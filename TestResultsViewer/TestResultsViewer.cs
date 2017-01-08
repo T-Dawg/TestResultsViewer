@@ -38,6 +38,8 @@ namespace TestResultsViewer
 		{
 			var node = new TestSuiteNode(testSuite);
 			node.ForeColor = GetNodeColor(testSuite.Passed, testSuite.Failed, testSuite.Inconclusive, testSuite.Skipped);
+			node.ToolTipText = "Passed: " + testSuite.Passed + ", Failed: " + testSuite.Failed +
+				", Skipped: " + testSuite.Skipped + ", Inconclusive: " + testSuite.Inconclusive;
 			foreach (var ts in testSuite.TestSuites)
 			{
 				node.Nodes.Add(MakeNode(ts)); //add this subtree
