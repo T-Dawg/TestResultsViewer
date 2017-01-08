@@ -311,6 +311,7 @@ namespace TestResultsViewer
 
 			var failure = new Failure();
 			failure.Message = GetCdata(element.Element(MessageElement)?.FirstNode);
+			failure.StackTrace = GetCdata(element.Element(StackTraceElement)?.FirstNode);
 			return failure;
 		}
 

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -33,9 +34,9 @@ namespace TestResultsViewer
 		}
 
 		//makes a TreeNode from a supplied TestSuite and its decendants
-		private TreeNode MakeNode(TestSuite testSuite)
+		private TestSuiteNode MakeNode(TestSuite testSuite)
 		{
-			var node = new TreeNode(testSuite.Name);
+			var node = new TestSuiteNode(testSuite);
 			node.ForeColor = GetNodeColor(testSuite.Passed, testSuite.Failed, testSuite.Inconclusive, testSuite.Skipped);
 			foreach (var ts in testSuite.TestSuites)
 			{
@@ -51,9 +52,9 @@ namespace TestResultsViewer
 		}
 
 		//makes a TreeNode from a supplied TestCase
-		private TreeNode MakeNode(TestCase testCase)
+		private TestCaseNode MakeNode(TestCase testCase)
 		{
-			var node = new TreeNode(testCase.Name);
+			var node = new TestCaseNode(testCase);
 			node.ForeColor = GetNodeColor(testCase.Result);
 			return node;
 		}
@@ -102,20 +103,63 @@ namespace TestResultsViewer
 		{
 			FileDialog = new OpenFileDialog();
 			FileDialog.RestoreDirectory = true;
+			FileDialog.Multiselect = false;
 			FileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
 			FileDialog.CheckFileExists = true;
 		}
 				
 		private void msi_File_Open_Click(object sender, EventArgs e)
 		{
-			FileDialog.ShowDialog();
-			try
+			if (FileDialog.ShowDialog() == DialogResult.OK)
 			{
-				LoadResults(FileDialog.FileName);
+				try
+				{
+					LoadResults(FileDialog.FileName);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show("Error parsing file.\n" + ex.Message);
+				}
 			}
-			catch (Exception ex)
+		}
+
+		private void TestStatusTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+		{
+			label_NodeName.Text = e.Node.Text;
+			panel_NodeName.BackColor = e.Node.ForeColor;
+			panel_TestDetail.Controls.Clear();
+			var nodeType = e.Node.GetType();
+			if (nodeType == typeof(TestSuiteNode))
 			{
-				MessageBox.Show("Error parsing file.\n" + ex.Message);
+				
+			}
+			else if (nodeType == typeof(TestCaseNode))
+			{
+				var node = (TestCaseNode)e.Node;
+				var textBox = new TextBox();
+				textBox.Dock = DockStyle.Fill;
+				textBox.Multiline = true;
+				textBox.ScrollBars = ScrollBars.Vertical;
+				textBox.AcceptsReturn = true;
+				textBox.AcceptsTab = true;
+				textBox.ReadOnly = true;
+				textBox.BackColor = Color.White;
+				textBox.Font = new Font("Microsoft Sans Serif", 10.0f);
+				var lines = new List<string>();
+				if (node.TestCase.Failure?.Message != null)
+				{
+					lines.AddRange(node.TestCase.Failure?.Message.Split('\n'));
+				}
+				
+				if (node.TestCase.Failure?.StackTrace != null)
+				{
+					lines.Add(string.Empty);
+					lines.Add("Stack Trace:");
+					lines.AddRange(node.TestCase.Failure?.StackTrace.Split('\n'));
+				}
+								
+				textBox.Lines = lines.ToArray();
+				panel_TestDetail.Controls.Add(textBox);
 			}
 		}
 		#endregion
