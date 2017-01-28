@@ -7,23 +7,36 @@ namespace TestResultsViewer
 {
 	public partial class form_Viewer : Form
 	{
-		public OpenFileDialog FileDialog;
-		public Results Results;
-		public Parser ResultsParser;
+		public OpenFileDialog _FileDialog;
+
+		private Results _ResultsMaster;
+		private Results _FilteredResults;
+		private Parser _ResultsParser;
+		private SortedSet<string> _CategorySet;
 
 		public form_Viewer()
 		{
 			InitializeComponent();
+			_CategorySet = new SortedSet<string>();
 		}
 
 		//Loads the results from the selected xml file
 		private void LoadResults(string fileName)
 		{
-			ResultsParser = new Parser(fileName);
-			Results = ResultsParser.Results();
+			_ResultsParser = new Parser(fileName);
+			_ResultsMaster = _ResultsParser.Results();
+			_FilteredResults = _ResultsMaster;
+			PopulateTreeView();
+			PopulateCategoriesList();
+		}
+
+		//populates the Test Status Tree View
+		private void PopulateTreeView()
+		{
 			TestStatusTreeView.BeginUpdate(); //disable drawing of the tree view
+			TestStatusTreeView.Nodes.Clear();
 			//find the first TestSuite in the hierarchy that will have more than 1 sub node
-			var startPoint = Results.TestRun.TestSuite;
+			var startPoint = _FilteredResults.TestRun.TestSuite;
 			while (startPoint.TestSuites != null && startPoint.TestSuites.Count <= 1 && (startPoint.TestCases?.Count ?? 0) == 0)
 			{
 				startPoint = startPoint.TestSuites[0];
@@ -31,6 +44,38 @@ namespace TestResultsViewer
 			TestStatusTreeView.Nodes.Add(MakeNode(startPoint)); //add this subtree
 			TestStatusTreeView.Nodes[0].Text = startPoint.FullName; //reset the node text to include all the skipped TestSuites
 			TestStatusTreeView.EndUpdate(); //enable and draw the tree view
+		}
+
+		//populates the categories list from the resutls master
+		private void PopulateCategoriesList()
+		{
+			_CategorySet.Clear();
+			AddCategories(_ResultsMaster.TestRun.TestSuite);
+			clb_Categories.BeginUpdate();
+			clb_Categories.Items.Clear();
+			foreach (var category in _CategorySet)
+			{
+				clb_Categories.Items.Add(category, true);
+			}
+
+			clb_Categories.EndUpdate();
+		}
+
+		//recursively adds categories to the master category set from a TestSuite
+		private void AddCategories(TestSuite testSuite)
+		{
+			foreach (var p in testSuite.Properties)
+			{
+				if (p.Name == "Category")
+				{
+					_CategorySet.Add(p.Value);
+				}
+			}
+
+			foreach (var ts in testSuite.TestSuites)
+			{
+				AddCategories(ts);
+			}
 		}
 
 		//makes a TreeNode from a supplied TestSuite and its decendants
@@ -100,23 +145,33 @@ namespace TestResultsViewer
 			}
 		}
 
+		//gets a corresponding muted color from an input color
+		private Color GetMutedColor(Color color)
+		{
+			if (color == Color.Red) return Color.Pink;
+			else if (color == Color.Green) return Color.LightGreen;
+			else if (color == Color.Yellow) return Color.LightYellow;
+			else if (color == Color.DimGray) return Color.LightGray;
+			else return color;
+		}
+
 		#region Events
 		private void TestResultsViewer_Load(object sender, EventArgs e)
 		{
-			FileDialog = new OpenFileDialog();
-			FileDialog.RestoreDirectory = true;
-			FileDialog.Multiselect = false;
-			FileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
-			FileDialog.CheckFileExists = true;
+			_FileDialog = new OpenFileDialog();
+			_FileDialog.RestoreDirectory = true;
+			_FileDialog.Multiselect = false;
+			_FileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
+			_FileDialog.CheckFileExists = true;
 		}
 				
 		private void msi_File_Open_Click(object sender, EventArgs e)
 		{
-			if (FileDialog.ShowDialog() == DialogResult.OK)
+			if (_FileDialog.ShowDialog() == DialogResult.OK)
 			{
 				try
 				{
-					LoadResults(FileDialog.FileName);
+					LoadResults(_FileDialog.FileName);
 				}
 				catch (Exception ex)
 				{
@@ -128,12 +183,11 @@ namespace TestResultsViewer
 		private void TestStatusTreeView_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
 		{
 			label_NodeName.Text = e.Node.Text;
-			panel_NodeName.BackColor = e.Node.ForeColor;
+			panel_NodeName.BackColor = GetMutedColor(e.Node.ForeColor);
 			panel_TestDetail.Controls.Clear();
 			var nodeType = e.Node.GetType();
 			if (nodeType == typeof(TestSuiteNode))
 			{
-				
 			}
 			else if (nodeType == typeof(TestCaseNode))
 			{
