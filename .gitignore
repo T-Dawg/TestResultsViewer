@@ -3,6 +3,5 @@ TestResultsViewer.VC.VC.opendb
 .vs
 TestResultsViewer/Debug
 Debug
-TestResultsViewer/obj/Release
-*.vshost*
-*.exe.config
+TestResultsViewer/Release
+Release
