@@ -195,6 +195,7 @@
 			// 
 			// clb_Categories
 			// 
+			this.clb_Categories.CheckOnClick = true;
 			this.clb_Categories.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.clb_Categories.FormattingEnabled = true;
 			this.clb_Categories.Location = new System.Drawing.Point(3, 19);

@@ -14,10 +14,15 @@ namespace TestResultsViewer
 		private Parser _ResultsParser;
 		private SortedSet<string> _CategorySet;
 
+		private EventHandler _StatusFilterClickHandler;
+		private ItemCheckEventHandler _CategoryFilterClickHandler;
+
 		public form_Viewer()
 		{
 			InitializeComponent();
 			_CategorySet = new SortedSet<string>();
+			_StatusFilterClickHandler = new EventHandler(Begin_Filter_Event);
+			_CategoryFilterClickHandler = new ItemCheckEventHandler(Begin_Filter_Event);
 		}
 
 		//Loads the results from the selected xml file
@@ -25,9 +30,69 @@ namespace TestResultsViewer
 		{
 			_ResultsParser = new Parser(fileName);
 			_ResultsMaster = _ResultsParser.Results();
-			_FilteredResults = _ResultsMaster;
+			_FilteredResults = new Results(_ResultsMaster);
 			PopulateTreeView();
 			PopulateCategoriesList();
+			cb_Passed.Checked = true;
+			cb_Failed.Checked = true;
+			cb_Ignored.Checked = true;
+			cb_Inconclusive.Checked = true;
+		}
+
+		//Filters the results set
+		private void FilterResults()
+		{
+			_FilteredResults = new Results(_ResultsMaster);
+			ApplyFilters(_FilteredResults.TestRun.TestSuite);
+			PopulateTreeView();
+		}
+
+		private bool ApplyFilters(TestSuite testSuite)
+		{
+			testSuite.TestSuites.RemoveAll(ts => !ApplyFilters(ts));
+			testSuite.TestCases.RemoveAll(tc => !ApplyFilters(tc));
+
+			return (testSuite.TestSuites.Count > 0 || testSuite.TestCases.Count > 0) &&
+				ContainsAnIcludedCategory(testSuite);
+		}
+
+		private bool ApplyFilters(TestCase tc)
+		{
+			switch (tc.Result.ToLower())
+			{
+				case "failed":
+					return cb_Failed.Checked;
+				case "passed":
+					return cb_Passed.Checked;
+				case "skipped":
+					return cb_Ignored.Checked;
+				default:
+					return cb_Inconclusive.Checked;
+			}
+		}
+
+		//checks if a given test Suite has an included category somewhere in its subtree
+		private bool ContainsAnIcludedCategory(TestSuite testSuite)
+		{
+			//test the current node
+			foreach (var p in testSuite.Properties)
+			{
+				if (p.Name == "Category" && clb_Categories.CheckedItems.Contains(p.Value))
+				{
+					return true;
+				}
+			}
+
+			//test the any child node contains an included category
+			foreach (var ts in testSuite.TestSuites)
+			{
+				if (ContainsAnIcludedCategory(ts))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		//populates the Test Status Tree View
@@ -37,18 +102,28 @@ namespace TestResultsViewer
 			TestStatusTreeView.Nodes.Clear();
 			//find the first TestSuite in the hierarchy that will have more than 1 sub node
 			var startPoint = _FilteredResults.TestRun.TestSuite;
-			while (startPoint.TestSuites != null && startPoint.TestSuites.Count <= 1 && (startPoint.TestCases?.Count ?? 0) == 0)
+			while (startPoint.TestSuites != null && startPoint.TestSuites.Count == 1 && (startPoint.TestCases?.Count ?? 0) == 0)
 			{
 				startPoint = startPoint.TestSuites[0];
 			}
-			TestStatusTreeView.Nodes.Add(MakeNode(startPoint)); //add this subtree
-			TestStatusTreeView.Nodes[0].Text = startPoint.FullName; //reset the node text to include all the skipped TestSuites
+
+			if (startPoint.TestSuites.Count == 0 && startPoint.TestCases.Count == 0)
+			{
+				TestStatusTreeView.Nodes.Add("No results to display");
+			}
+			else
+			{
+				TestStatusTreeView.Nodes.Add(MakeNode(startPoint)); //add this subtree
+				TestStatusTreeView.Nodes[0].Text = startPoint.FullName; //reset the node text to include all the skipped TestSuites
+			}
+
 			TestStatusTreeView.EndUpdate(); //enable and draw the tree view
 		}
 
 		//populates the categories list from the resutls master
 		private void PopulateCategoriesList()
 		{
+			clb_Categories.ItemCheck -= _CategoryFilterClickHandler;
 			_CategorySet.Clear();
 			AddCategories(_ResultsMaster.TestRun.TestSuite);
 			clb_Categories.BeginUpdate();
@@ -59,6 +134,7 @@ namespace TestResultsViewer
 			}
 
 			clb_Categories.EndUpdate();
+			clb_Categories.ItemCheck += _CategoryFilterClickHandler;
 		}
 
 		//recursively adds categories to the master category set from a TestSuite
@@ -163,6 +239,11 @@ namespace TestResultsViewer
 			_FileDialog.Multiselect = false;
 			_FileDialog.Filter = "xml files (*.xml)|*.xml|All files (*.*)|*.*";
 			_FileDialog.CheckFileExists = true;
+
+			cb_Passed.Click += _StatusFilterClickHandler;
+			cb_Failed.Click += _StatusFilterClickHandler;
+			cb_Ignored.Click += _StatusFilterClickHandler;
+			cb_Inconclusive.Click += _StatusFilterClickHandler;
 		}
 				
 		private void msi_File_Open_Click(object sender, EventArgs e)
@@ -217,6 +298,13 @@ namespace TestResultsViewer
 				textBox.Lines = lines.ToArray();
 				panel_TestDetail.Controls.Add(textBox);
 			}
+		}
+
+		private void Begin_Filter_Event(object sender, EventArgs e)
+		{
+			if (_ResultsMaster == null) return;
+
+			FilterResults();
 		}
 		#endregion
 	}
