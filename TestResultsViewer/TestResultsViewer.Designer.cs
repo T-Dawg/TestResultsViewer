@@ -40,6 +40,8 @@
 			this.panel_Filters = new System.Windows.Forms.Panel();
 			this.grpBox_CategoryFilters = new System.Windows.Forms.GroupBox();
 			this.clb_Categories = new System.Windows.Forms.CheckedListBox();
+			this.panel_SelectAllCategories = new System.Windows.Forms.Panel();
+			this.cb_SelectAllCategories = new System.Windows.Forms.CheckBox();
 			this.grpBox_StatusFilters = new System.Windows.Forms.GroupBox();
 			this.cb_Inconclusive = new System.Windows.Forms.CheckBox();
 			this.cb_Ignored = new System.Windows.Forms.CheckBox();
@@ -59,6 +61,7 @@
 			this.splitContainer_Left.SuspendLayout();
 			this.panel_Filters.SuspendLayout();
 			this.grpBox_CategoryFilters.SuspendLayout();
+			this.panel_SelectAllCategories.SuspendLayout();
 			this.grpBox_StatusFilters.SuspendLayout();
 			this.panel_TreeResultsHeader.SuspendLayout();
 			this.SuspendLayout();
@@ -185,6 +188,7 @@
 			// grpBox_CategoryFilters
 			// 
 			this.grpBox_CategoryFilters.Controls.Add(this.clb_Categories);
+			this.grpBox_CategoryFilters.Controls.Add(this.panel_SelectAllCategories);
 			this.grpBox_CategoryFilters.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.grpBox_CategoryFilters.Location = new System.Drawing.Point(0, 139);
 			this.grpBox_CategoryFilters.Name = "grpBox_CategoryFilters";
@@ -198,10 +202,31 @@
 			this.clb_Categories.CheckOnClick = true;
 			this.clb_Categories.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.clb_Categories.FormattingEnabled = true;
-			this.clb_Categories.Location = new System.Drawing.Point(3, 19);
+			this.clb_Categories.Location = new System.Drawing.Point(3, 46);
 			this.clb_Categories.Name = "clb_Categories";
-			this.clb_Categories.Size = new System.Drawing.Size(160, 168);
+			this.clb_Categories.Size = new System.Drawing.Size(160, 141);
 			this.clb_Categories.TabIndex = 0;
+			// 
+			// panel_SelectAllCategories
+			// 
+			this.panel_SelectAllCategories.Controls.Add(this.cb_SelectAllCategories);
+			this.panel_SelectAllCategories.Dock = System.Windows.Forms.DockStyle.Top;
+			this.panel_SelectAllCategories.Location = new System.Drawing.Point(3, 19);
+			this.panel_SelectAllCategories.Name = "panel_SelectAllCategories";
+			this.panel_SelectAllCategories.Size = new System.Drawing.Size(160, 27);
+			this.panel_SelectAllCategories.TabIndex = 2;
+			// 
+			// cb_SelectAllCategories
+			// 
+			this.cb_SelectAllCategories.AutoSize = true;
+			this.cb_SelectAllCategories.Enabled = false;
+			this.cb_SelectAllCategories.Location = new System.Drawing.Point(3, 3);
+			this.cb_SelectAllCategories.Name = "cb_SelectAllCategories";
+			this.cb_SelectAllCategories.Size = new System.Drawing.Size(85, 21);
+			this.cb_SelectAllCategories.TabIndex = 1;
+			this.cb_SelectAllCategories.Text = "Select All";
+			this.cb_SelectAllCategories.UseVisualStyleBackColor = true;
+			this.cb_SelectAllCategories.Click += new System.EventHandler(this.cb_SelectAllCategories_Click);
 			// 
 			// grpBox_StatusFilters
 			// 
@@ -222,6 +247,7 @@
 			this.cb_Inconclusive.AutoSize = true;
 			this.cb_Inconclusive.Checked = true;
 			this.cb_Inconclusive.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cb_Inconclusive.Enabled = false;
 			this.cb_Inconclusive.Location = new System.Drawing.Point(7, 108);
 			this.cb_Inconclusive.Name = "cb_Inconclusive";
 			this.cb_Inconclusive.Size = new System.Drawing.Size(104, 21);
@@ -234,6 +260,7 @@
 			this.cb_Ignored.AutoSize = true;
 			this.cb_Ignored.Checked = true;
 			this.cb_Ignored.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cb_Ignored.Enabled = false;
 			this.cb_Ignored.Location = new System.Drawing.Point(7, 80);
 			this.cb_Ignored.Name = "cb_Ignored";
 			this.cb_Ignored.Size = new System.Drawing.Size(75, 21);
@@ -246,6 +273,7 @@
 			this.cb_Failed.AutoSize = true;
 			this.cb_Failed.Checked = true;
 			this.cb_Failed.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cb_Failed.Enabled = false;
 			this.cb_Failed.Location = new System.Drawing.Point(7, 52);
 			this.cb_Failed.Name = "cb_Failed";
 			this.cb_Failed.Size = new System.Drawing.Size(65, 21);
@@ -258,6 +286,7 @@
 			this.cb_Passed.AutoSize = true;
 			this.cb_Passed.Checked = true;
 			this.cb_Passed.CheckState = System.Windows.Forms.CheckState.Checked;
+			this.cb_Passed.Enabled = false;
 			this.cb_Passed.Location = new System.Drawing.Point(7, 24);
 			this.cb_Passed.Name = "cb_Passed";
 			this.cb_Passed.Size = new System.Drawing.Size(74, 21);
@@ -310,6 +339,8 @@
 			this.splitContainer_Left.ResumeLayout(false);
 			this.panel_Filters.ResumeLayout(false);
 			this.grpBox_CategoryFilters.ResumeLayout(false);
+			this.panel_SelectAllCategories.ResumeLayout(false);
+			this.panel_SelectAllCategories.PerformLayout();
 			this.grpBox_StatusFilters.ResumeLayout(false);
 			this.grpBox_StatusFilters.PerformLayout();
 			this.panel_TreeResultsHeader.ResumeLayout(false);
@@ -340,6 +371,8 @@
 		private System.Windows.Forms.CheckBox cb_Passed;
 		private System.Windows.Forms.GroupBox grpBox_CategoryFilters;
 		private System.Windows.Forms.CheckedListBox clb_Categories;
+		private System.Windows.Forms.CheckBox cb_SelectAllCategories;
+		private System.Windows.Forms.Panel panel_SelectAllCategories;
 	}
 }
 

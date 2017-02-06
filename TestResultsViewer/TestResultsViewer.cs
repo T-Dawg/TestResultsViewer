@@ -13,7 +13,7 @@ namespace TestResultsViewer
 		private Results _FilteredResults;
 		private Parser _ResultsParser;
 		private SortedSet<string> _CategorySet;
-
+		private SortedSet<string> _CheckedCategories;
 		private EventHandler _StatusFilterClickHandler;
 		private ItemCheckEventHandler _CategoryFilterClickHandler;
 
@@ -21,8 +21,9 @@ namespace TestResultsViewer
 		{
 			InitializeComponent();
 			_CategorySet = new SortedSet<string>();
+			_CheckedCategories = new SortedSet<string>();
 			_StatusFilterClickHandler = new EventHandler(Begin_Filter_Event);
-			_CategoryFilterClickHandler = new ItemCheckEventHandler(Begin_Filter_Event);
+			_CategoryFilterClickHandler = new ItemCheckEventHandler(clb_Categories_ItemCheck);
 		}
 
 		//Loads the results from the selected xml file
@@ -37,11 +38,17 @@ namespace TestResultsViewer
 			cb_Failed.Checked = true;
 			cb_Ignored.Checked = true;
 			cb_Inconclusive.Checked = true;
+			cb_Passed.Enabled = true;
+			cb_Failed.Enabled = true;
+			cb_Ignored.Enabled = true;
+			cb_Inconclusive.Enabled = true;
 		}
 
 		//Filters the results set
 		private void FilterResults()
 		{
+			if (_ResultsMaster == null) return;
+
 			_FilteredResults = new Results(_ResultsMaster);
 			ApplyFilters(_FilteredResults.TestRun.TestSuite);
 			PopulateTreeView();
@@ -53,7 +60,7 @@ namespace TestResultsViewer
 			testSuite.TestCases.RemoveAll(tc => !ApplyFilters(tc));
 
 			return (testSuite.TestSuites.Count > 0 || testSuite.TestCases.Count > 0) &&
-				ContainsAnIcludedCategory(testSuite);
+				(_CategorySet.Count == 0 || ContainsAnIcludedCategory(testSuite));
 		}
 
 		private bool ApplyFilters(TestCase tc)
@@ -77,7 +84,7 @@ namespace TestResultsViewer
 			//test the current node
 			foreach (var p in testSuite.Properties)
 			{
-				if (p.Name == "Category" && clb_Categories.CheckedItems.Contains(p.Value))
+				if (p.Name == "Category" && _CheckedCategories.Contains(p.Value))
 				{
 					return true;
 				}
@@ -126,6 +133,7 @@ namespace TestResultsViewer
 			clb_Categories.ItemCheck -= _CategoryFilterClickHandler;
 			_CategorySet.Clear();
 			AddCategories(_ResultsMaster.TestRun.TestSuite);
+			cb_SelectAllCategories.Checked = true;
 			clb_Categories.BeginUpdate();
 			clb_Categories.Items.Clear();
 			foreach (var category in _CategorySet)
@@ -135,6 +143,10 @@ namespace TestResultsViewer
 
 			clb_Categories.EndUpdate();
 			clb_Categories.ItemCheck += _CategoryFilterClickHandler;
+			if (clb_Categories.Items.Count > 0)
+			{
+				cb_SelectAllCategories.Enabled = true;
+			}
 		}
 
 		//recursively adds categories to the master category set from a TestSuite
@@ -231,6 +243,15 @@ namespace TestResultsViewer
 			else return color;
 		}
 
+		private void GetCheckedCategorySet()
+		{
+			_CheckedCategories.Clear();
+			foreach (var item in clb_Categories.CheckedItems)
+			{
+				_CheckedCategories.Add(item.ToString());
+			}
+		}
+
 		#region Events
 		private void TestResultsViewer_Load(object sender, EventArgs e)
 		{
@@ -302,8 +323,37 @@ namespace TestResultsViewer
 
 		private void Begin_Filter_Event(object sender, EventArgs e)
 		{
-			if (_ResultsMaster == null) return;
+			GetCheckedCategorySet();
+			FilterResults();
+		}
 
+		private void clb_Categories_ItemCheck(object sender, ItemCheckEventArgs e)
+		{
+			GetCheckedCategorySet();
+			if (e.NewValue == CheckState.Checked)
+			{
+				_CheckedCategories.Add(clb_Categories.Items[e.Index].ToString());
+			}
+			else if (e.NewValue == CheckState.Unchecked)
+			{
+				_CheckedCategories.Remove(clb_Categories.Items[e.Index].ToString());
+			}
+
+			FilterResults();
+		}
+
+		private void cb_SelectAllCategories_Click(object sender, EventArgs e)
+		{
+			clb_Categories.BeginUpdate();
+			clb_Categories.ItemCheck -= _CategoryFilterClickHandler;
+			for (int i = 0; i < clb_Categories.Items.Count; ++i)
+			{
+				clb_Categories.SetItemChecked(i, cb_SelectAllCategories.Checked);
+			}
+
+			clb_Categories.EndUpdate();
+			clb_Categories.ItemCheck += _CategoryFilterClickHandler;
+			GetCheckedCategorySet();
 			FilterResults();
 		}
 		#endregion
