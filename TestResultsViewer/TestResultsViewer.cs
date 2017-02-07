@@ -106,7 +106,6 @@ namespace TestResultsViewer
 		private void PopulateTreeView()
 		{
 			TestStatusTreeView.BeginUpdate(); //disable drawing of the tree view
-			TestStatusTreeView.Nodes.Clear();
 			//find the first TestSuite in the hierarchy that will have more than 1 sub node
 			var startPoint = _FilteredResults.TestRun.TestSuite;
 			while (startPoint.TestSuites != null && startPoint.TestSuites.Count == 1 && (startPoint.TestCases?.Count ?? 0) == 0)
@@ -116,12 +115,23 @@ namespace TestResultsViewer
 
 			if (startPoint.TestSuites.Count == 0 && startPoint.TestCases.Count == 0)
 			{
+				//empty results
+				TestStatusTreeView.Nodes.Clear();
 				TestStatusTreeView.Nodes.Add("No results to display");
+			}
+			else if (TestStatusTreeView.Nodes.Count == 0 ||
+				TestStatusTreeView.Nodes[0].Text != startPoint.FullName)
+			{
+				//this is new test results load or the inital node has changed
+				TestStatusTreeView.Nodes.Clear();
+				TestStatusTreeView.Nodes.Add(MakeNode(startPoint)); //add this subtree
+				TestStatusTreeView.Nodes[0].Text = startPoint.FullName; //reset the node text to include all the skipped TestSuites
 			}
 			else
 			{
-				TestStatusTreeView.Nodes.Add(MakeNode(startPoint)); //add this subtree
-				TestStatusTreeView.Nodes[0].Text = startPoint.FullName; //reset the node text to include all the skipped TestSuites
+				//this is a test results filter update
+				UpdateTreeViewNode(TestStatusTreeView.Nodes[0], startPoint);
+				TestStatusTreeView.Nodes[0].Text = startPoint.FullName;
 			}
 
 			TestStatusTreeView.EndUpdate(); //enable and draw the tree view
@@ -192,6 +202,71 @@ namespace TestResultsViewer
 			var node = new TestCaseNode(testCase);
 			node.ForeColor = GetNodeColor(testCase.Result);
 			return node;
+		}
+
+		private void UpdateTreeViewNode(TreeNode currentNode, TestSuite testSuite)
+		{
+			//delete non-matching nodes
+			List<TreeNode> nodesToDelete = new List<TreeNode>();
+			List<TestSuite> matchedTestSuites = new List<TestSuite>();
+			List<TestCase> matchedTestCases = new List<TestCase>();
+			SortedSet<TestSuite> testSuitesToAdd = new SortedSet<TestSuite>();
+			SortedSet<TestCase> testCasesToAdd = new SortedSet<TestCase>();
+
+			foreach (TreeNode node in currentNode.Nodes)
+			{
+				var deleteThisNode = true;
+				foreach (var ts in testSuite.TestSuites)
+				{
+					if (ts.Name == node.Text) //update this node
+					{
+						UpdateTreeViewNode(node, ts);
+						matchedTestSuites.Add(ts);
+						deleteThisNode = false;
+					}
+					else //add a new node for this test suite
+					{
+						testSuitesToAdd.Add(ts);
+					}
+				}
+
+				foreach (var tc in testSuite.TestCases)
+				{
+					if (tc.Name == node.Text)
+					{
+						matchedTestCases.Add(tc);
+						deleteThisNode = false;
+					}
+					else
+					{
+						testCasesToAdd.Add(tc);
+					}
+				}
+
+				if (deleteThisNode)
+				{
+					nodesToDelete.Add(node);
+				}
+			}
+
+			//prune nodes from the tree that were filtered out
+			foreach(var node in nodesToDelete)
+			{
+				currentNode.Nodes.Remove(node);
+			}
+
+			//add any necessary new nodes to the tree
+			testSuitesToAdd.RemoveWhere(ts => matchedTestSuites.Exists(m => m == ts));
+			foreach(var ts in testSuitesToAdd)
+			{
+				currentNode.Nodes.Add(MakeNode(ts));
+			}
+
+			testCasesToAdd.RemoveWhere(tc => matchedTestCases.Exists(m => m == tc));
+			foreach(var tc in testCasesToAdd)
+			{
+				currentNode.Nodes.Add(MakeNode(tc));
+			}
 		}
 
 		//determies the color of a node based on status of tests

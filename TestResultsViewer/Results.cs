@@ -68,7 +68,7 @@ namespace TestResultsViewer
 		}
 	}
 
-	public class TestSuite : CollectionResults
+	public class TestSuite : CollectionResults, IComparable
 	{
 		public string Type { get; set; }
 		public string Name { get; set; }
@@ -112,6 +112,16 @@ namespace TestResultsViewer
 				TestCases.Add(new TestCase(item, this));
 			}
 		}
+
+		public int CompareTo(object obj)
+		{
+			if (obj.GetType() != typeof(TestSuite))
+			{
+				throw new ArgumentException(obj.GetType().ToString() + " cannot be compared with type TestSuite");
+			}
+
+			return Name.CompareTo(((TestSuite)obj).Name);
+		}
 	}
 
 	public class Results
@@ -126,7 +136,7 @@ namespace TestResultsViewer
 		}
 	}
 
-	public class TestCase : TestBase
+	public class TestCase : TestBase, IComparable
 	{
 		public string Name { get; set; }
 		public string FullName { get; set; }
@@ -156,6 +166,16 @@ namespace TestResultsViewer
 			Properties = new PropertyList(tc.Properties);
 			Reason = new Reason(tc.Reason);
 			Failure = new Failure(tc.Failure);
+		}
+
+		public int CompareTo(object obj)
+		{
+			if (obj.GetType() != typeof(TestCase))
+			{
+				throw new ArgumentException(obj.GetType().ToString() + " cannot be compared with type TestCase");
+			}
+
+			return Name.CompareTo(((TestCase)obj).Name);
 		}
 	}
 
