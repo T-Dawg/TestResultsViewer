@@ -49,8 +49,10 @@
 			this.cb_Passed = new System.Windows.Forms.CheckBox();
 			this.panel_TreeResultsHeader = new System.Windows.Forms.Panel();
 			this.label_TreeResults = new System.Windows.Forms.Label();
+			this.tb_Details = new System.Windows.Forms.TextBox();
 			this.ms_viewerMenu.SuspendLayout();
 			this.panel_NodeName.SuspendLayout();
+			this.panel_TestDetail.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer_Main)).BeginInit();
 			this.splitContainer_Main.Panel1.SuspendLayout();
 			this.splitContainer_Main.Panel2.SuspendLayout();
@@ -129,6 +131,7 @@
 			this.panel_TestDetail.AutoScroll = true;
 			this.panel_TestDetail.BackColor = System.Drawing.SystemColors.Window;
 			this.panel_TestDetail.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.panel_TestDetail.Controls.Add(this.tb_Details);
 			this.panel_TestDetail.Dock = System.Windows.Forms.DockStyle.Fill;
 			this.panel_TestDetail.Location = new System.Drawing.Point(0, 31);
 			this.panel_TestDetail.Name = "panel_TestDetail";
@@ -314,6 +317,21 @@
 			this.label_TreeResults.TabIndex = 2;
 			this.label_TreeResults.Text = "Results Tree View";
 			// 
+			// tb_Details
+			// 
+			this.tb_Details.AcceptsReturn = true;
+			this.tb_Details.AcceptsTab = true;
+			this.tb_Details.BackColor = System.Drawing.SystemColors.Window;
+			this.tb_Details.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.tb_Details.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.tb_Details.Location = new System.Drawing.Point(0, 0);
+			this.tb_Details.Multiline = true;
+			this.tb_Details.Name = "tb_Details";
+			this.tb_Details.ReadOnly = true;
+			this.tb_Details.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.tb_Details.Size = new System.Drawing.Size(614, 256);
+			this.tb_Details.TabIndex = 0;
+			// 
 			// form_Viewer
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -329,6 +347,8 @@
 			this.ms_viewerMenu.PerformLayout();
 			this.panel_NodeName.ResumeLayout(false);
 			this.panel_NodeName.PerformLayout();
+			this.panel_TestDetail.ResumeLayout(false);
+			this.panel_TestDetail.PerformLayout();
 			this.splitContainer_Main.Panel1.ResumeLayout(false);
 			this.splitContainer_Main.Panel2.ResumeLayout(false);
 			((System.ComponentModel.ISupportInitialize)(this.splitContainer_Main)).EndInit();
@@ -373,6 +393,7 @@
 		private System.Windows.Forms.CheckedListBox clb_Categories;
 		private System.Windows.Forms.CheckBox cb_SelectAllCategories;
 		private System.Windows.Forms.Panel panel_SelectAllCategories;
+		private System.Windows.Forms.TextBox tb_Details;
 	}
 }
 

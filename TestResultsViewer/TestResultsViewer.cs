@@ -361,39 +361,51 @@ namespace TestResultsViewer
 		{
 			label_NodeName.Text = e.Node.Text;
 			panel_NodeName.BackColor = GetMutedColor(e.Node.ForeColor);
-			panel_TestDetail.Controls.Clear();
+
+			tb_Details.Clear();
+			var lines = new List<string>();
 			var nodeType = e.Node.GetType();
 			if (nodeType == typeof(TestSuiteNode))
 			{
+				var node = (TestSuiteNode)e.Node;
+				var description = node.TestSuite.Properties.Find(p => p.Name == "Description");
+				if (description != null)
+				{
+					lines.Add(description.Value);
+					lines.Add(string.Empty);
+				}
+
+				if (node.TestSuite.Result == "Failed")
+				{
+					lines.Add(node.TestSuite.Failure?.Message ?? string.Empty);
+				}
+				else if (node.TestSuite.Result == "Skipped")
+				{
+					lines.Add(node.TestSuite.Reason?.Message ?? string.Empty);
+				}
 			}
 			else if (nodeType == typeof(TestCaseNode))
 			{
 				var node = (TestCaseNode)e.Node;
-				var textBox = new TextBox();
-				textBox.Dock = DockStyle.Fill;
-				textBox.Multiline = true;
-				textBox.ScrollBars = ScrollBars.Vertical;
-				textBox.AcceptsReturn = true;
-				textBox.AcceptsTab = true;
-				textBox.ReadOnly = true;
-				textBox.BackColor = Color.White;
-				textBox.Font = new Font("Microsoft Sans Serif", 10.0f);
-				var lines = new List<string>();
 				if (node.TestCase.Failure?.Message != null)
 				{
-					lines.AddRange(node.TestCase.Failure?.Message.Split('\n'));
+					lines.AddRange(node.TestCase.Failure.Message.Split('\n'));
 				}
 				
 				if (node.TestCase.Failure?.StackTrace != null)
 				{
 					lines.Add(string.Empty);
 					lines.Add("Stack Trace:");
-					lines.AddRange(node.TestCase.Failure?.StackTrace.Split('\n'));
+					lines.AddRange(node.TestCase.Failure.StackTrace.Split('\n'));
 				}
-								
-				textBox.Lines = lines.ToArray();
-				panel_TestDetail.Controls.Add(textBox);
+
+				if (node.TestCase.Reason?.Message != null)
+				{
+					lines.Add(node.TestCase.Reason.Message);
+				}
 			}
+
+			tb_Details.Lines = lines.ToArray();
 		}
 
 		private void Begin_Filter_Event(object sender, EventArgs e)
